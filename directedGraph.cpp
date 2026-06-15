@@ -53,4 +53,48 @@ public:
         std::cout << "Total de Nodos: " << listaAdyacencia.size() << "\n";
         std::cout << "Total de Aristas (conexiones): " << totalAristas << "\n\n";
     }
+
+    // Métricas:
+
+    // Método para calcular el Degree Centrality de un vértice
+    // normalizada: Si es true, divide el resultado entre (Total_Nodos - 1).
+    // ponderada: Si es true, suma los pesos en lugar de contar las aristas.
+    double calcularCentralidadGrado(const std::string& vertice, bool normalizada = true, bool ponderada = false) {
+        // Validar que el vértice exista en el grafo
+        if (listaAdyacencia.find(vertice) == listaAdyacencia.end()) {
+            std::cerr << "Error: El vertice '" << vertice << "' no existe en el grafo.\n";
+            return 0.0;
+        }
+
+        double outDegree = 0.0;
+        double inDegree = 0.0;
+
+        // Calcular el Grado de Salida
+        for (const auto& arista : listaAdyacencia.at(vertice)) {
+            outDegree += ponderada ? arista.peso : 1.0;
+        }
+
+        // Calcular el Grado de Entrada
+        for (const auto& par : listaAdyacencia) {
+            for (const auto& arista : par.second) {
+                if (arista.destino == vertice) {
+                    inDegree += ponderada ? arista.peso : 1.0;
+                }
+            }
+        }
+
+        double gradoTotal = inDegree + outDegree;
+
+        // Normalización
+        if (normalizada && !ponderada) {
+            size_t numNodos = listaAdyacencia.size();
+            if (numNodos > 1) {
+                gradoTotal = gradoTotal / static_cast<double>(numNodos - 1);
+            } else {
+                gradoTotal = 0.0;
+            }
+        }
+
+        return gradoTotal;
+    }
 };

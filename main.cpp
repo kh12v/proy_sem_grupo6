@@ -21,7 +21,7 @@ void mostrarProgreso(double porcentaje) {
 }
 
 // Está diseñado específicamente para leer grafos no dirigidos, es decir (A->B y B->A)
-void cargarGrafoCsvNoDirigido(GrafoDirigido& grafoDirigido, const std::string& nombreArchivo) {
+void cargarDesdeCsvNoDirigido(GrafoDirigido& grafoDirigido, const std::string& nombreArchivo) {
     // Abrir el archivo
     std::ifstream archivo(nombreArchivo, std::ios::binary | std::ios::ate);
     if (!archivo.is_open()) {
@@ -168,9 +168,13 @@ int main() {
     GrafoDirigido grafo;
     std::string nombreArchivoCsv = "datasets/imdbActorsNetwork.csv";
     std::string nombreArchivoPajek = "datasets/tradeNetwork2018.net";
+    std::string nombreDummyCsv = "datasets/dummy.csv";
+    std::string nombreDummyPajek = "datasets/dummy.net";
+
+    cargarDesdePajek(grafo, nombreDummyPajek);
     
-    cargarDesdePajek(grafo, nombreArchivoPajek);
-    
+    std::cout << "Centralidad de grado: " << grafo.calcularCentralidadGrado("A", false, true) << std::endl;
+
     // Mostramos las estadísticas de tamaño
     grafo.imprimirInformacion();
 
