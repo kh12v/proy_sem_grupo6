@@ -178,5 +178,11 @@ int main() {
     // Mostramos las estadísticas de tamaño
     grafo.imprimirInformacion();
 
+    auto betweenness = grafo.calcularBetweennessCentrality(false);
+
+    for (const auto& par : betweenness) {
+        std::cout << "Nodo [" << par.first << "]: " << par.second << "\n";
+    }
+
     return 0;
 }
