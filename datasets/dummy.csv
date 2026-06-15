@@ -1,0 +1,12 @@
+From,To,Strength
+A,H,4
+A,B,2
+H,H,0
+H,E,5
+B,C,3
+G,A,2
+C,G,8
+C,D,4
+E,D,1
+E,F,3
+F,G,5
