@@ -173,16 +173,35 @@ int main() {
 
     cargarDesdePajek(grafo, nombreDummyPajek);
     
+    // ===== Centralidad de grado =====
+
     std::cout << "Centralidad de grado: " << grafo.calcularCentralidadGrado("A", false, true) << std::endl;
 
     // Mostramos las estadísticas de tamaño
     grafo.imprimirInformacion();
+
+    // ===== Betweenness Centrality =====
 
     auto betweenness = grafo.calcularBetweennessCentrality(false);
 
     for (const auto& par : betweenness) {
         std::cout << "Nodo [" << par.first << "]: " << par.second << "\n";
     }
+
+    // ===== PageRank =====
+
+    auto pagerank = grafo.calcularPageRank();
+
+    // Variable para verificar que la suma de todos los PR es aproximadamente 1.0
+    double sumaTotal = 0.0;
+
+    for (const auto& par : pagerank) {
+        std::cout << "Nodo [" << par.first << "]: " << par.second << "\n";
+        sumaTotal += par.second;
+    }
+
+    std::cout << "---------------------------\n";
+    std::cout << "Suma total de PageRank: " << sumaTotal << " (Debe ser ~1.0)\n";
 
     return 0;
 }

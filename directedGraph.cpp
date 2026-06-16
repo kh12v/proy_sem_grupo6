@@ -5,6 +5,7 @@
 #include <queue>
 #include <limits>
 #include <stack>
+#include <cmath>
 
 // Estructura de arista (dirigida y con peso)
 struct Arista {
@@ -205,5 +206,86 @@ public:
         }
 
         return betweenness;
+    }
+
+    // Método para calcular el PageRank ponderado de todos los vértices
+    // d: Damping factor (Factor de amortiguación), default: 0.85
+    // maxIteraciones: Límite de seguridad por si el grafo no converge
+    // tolerancia: Margen de error para decidir que los valores ya se estabilizaron
+    std::unordered_map<std::string, double> calcularPageRank(double d = 0.85, int maxIteraciones = 100, double tolerancia = 1e-6) {
+        size_t N = listaAdyacencia.size();
+        std::unordered_map<std::string, double> pr;
+        
+        if (N == 0) return pr;
+
+        std::unordered_map<std::string, double> outWeight;
+
+        // Inicialización y pre-cálculo
+        // Todos los nodos inician con el mismo PageRank: 1/N
+        double valorInicial = 1.0 / static_cast<double>(N);
+        for (const auto& par : listaAdyacencia) {
+            const std::string& nodo = par.first;
+            pr[nodo] = valorInicial;
+            
+            // Calculamos el peso total de salida de cada nodo
+            double sumaPesos = 0.0;
+            for (const auto& arista : par.second) {
+                sumaPesos += arista.peso;
+            }
+            outWeight[nodo] = sumaPesos;
+        }
+
+        // Proceso Iterativo
+        for (int iter = 0; iter < maxIteraciones; ++iter) {
+            std::unordered_map<std::string, double> nuevoPr;
+            double danglingSum = 0.0;
+
+            // Base del PageRank (el (1-d)% de salto aleatorio)
+            double baseAleatoria = (1.0 - d) / static_cast<double>(N);
+            for (const auto& par : listaAdyacencia) {
+                nuevoPr[par.first] = baseAleatoria;
+            }
+
+            // Transferencia de influencia
+            for (const auto& par : listaAdyacencia) {
+                const std::string& u = par.first;
+                
+                if (outWeight[u] > 0) {
+                    // Si el nodo tiene salidas, reparte su PR proporcionalmente al peso de cada arista
+                    for (const auto& arista : par.second) {
+                        const std::string& v = arista.destino;
+                        double proporcion = arista.peso / outWeight[u];
+                        nuevoPr[v] += d * pr[u] * proporcion;
+                    }
+                } else {
+                    // Nodo sumidero (sin salidas): se acumula su PR para repartirlo a todos
+                    danglingSum += pr[u];
+                }
+            }
+
+            // Repartir el PR de los nodos sumidero (Dangling nodes) equitativamente
+            if (danglingSum > 0) {
+                double porcionDangling = (d * danglingSum) / static_cast<double>(N);
+                for (auto& par : nuevoPr) {
+                    par.second += porcionDangling;
+                }
+            }
+
+            // Comprobar Convergencia
+            double error = 0.0;
+            for (const auto& par : listaAdyacencia) {
+                error += std::abs(nuevoPr[par.first] - pr[par.first]);
+            }
+
+            // Actualizamos los valores para la siguiente iteración
+            pr = nuevoPr;
+
+            // Si el cambio total es menor que la tolerancia, terminamos prematuramente
+            if (error < tolerancia) {
+                break;
+            }
+        }
+
+        return pr;
     }
 };
