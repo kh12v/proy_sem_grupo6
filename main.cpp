@@ -203,5 +203,11 @@ int main() {
     std::cout << "---------------------------\n";
     std::cout << "Suma total de PageRank: " << sumaTotal << " (Debe ser ~1.0)\n";
 
+    // ===== Average Shortest Path Length =====
+    std::cout << "Average Shortest Path Length: " << grafo.calcularAverageShortestPathLength() << std::endl;
+
+    // ===== Diametro =====
+    std::cout << "Diametro del grafo: " << grafo.calcularDiametro() << std::endl;
+
     return 0;
 }

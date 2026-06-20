@@ -30,6 +30,46 @@ public:
         }
     }
 
+    // Calcula las distancias mínimas desde un nodo usando Dijkstra.
+    // Devuelve solo distancias finitas hacia nodos alcanzables.
+    std::unordered_map<std::string, double> calcularDistanciasMinimasDesde(const std::string& origen) const {
+        std::unordered_map<std::string, double> distancias;
+
+        if (listaAdyacencia.find(origen) == listaAdyacencia.end()) {
+            return distancias;
+        }
+
+        for (const auto& par : listaAdyacencia) {
+            distancias[par.first] = std::numeric_limits<double>::infinity();
+        }
+
+        using NodoDistancia = std::pair<double, std::string>;
+        std::priority_queue<NodoDistancia, std::vector<NodoDistancia>, std::greater<NodoDistancia>> pq;
+
+        distancias[origen] = 0.0;
+        pq.push({0.0, origen});
+
+        while (!pq.empty()) {
+            double distanciaActual = pq.top().first;
+            std::string nodoActual = pq.top().second;
+            pq.pop();
+
+            if (distanciaActual > distancias[nodoActual]) {
+                continue;
+            }
+
+            for (const auto& arista : listaAdyacencia.at(nodoActual)) {
+                double nuevaDistancia = distancias[nodoActual] + arista.peso;
+                if (nuevaDistancia < distancias[arista.destino]) {
+                    distancias[arista.destino] = nuevaDistancia;
+                    pq.push({nuevaDistancia, arista.destino});
+                }
+            }
+        }
+
+        return distancias;
+    }
+
     // Método para visualizar el contenido del grafo
     void imprimirGrafo() {
         for (const auto& par : listaAdyacencia) {
@@ -287,5 +327,59 @@ public:
         }
 
         return pr;
+    }
+
+    // Average Shortest Path Length (ASP): promedio de todas las distancias mínimas finitas.
+    // En grafos desconectados se promedian solo los pares alcanzables.
+    double calcularAverageShortestPathLength() const {
+        if (listaAdyacencia.empty()) {
+            return 0.0;
+        }
+
+        double sumaDistancias = 0.0;
+        long long cantidadPares = 0;
+
+        for (const auto& par : listaAdyacencia) {
+            const std::string& origen = par.first;
+            auto distancias = calcularDistanciasMinimasDesde(origen);
+
+            for (const auto& distancia : distancias) {
+                if (distancia.first != origen && std::isfinite(distancia.second)) {
+                    sumaDistancias += distancia.second;
+                    cantidadPares++;
+                }
+            }
+        }
+
+        if (cantidadPares == 0) {
+            return 0.0;
+        }
+
+        return sumaDistancias / static_cast<double>(cantidadPares);
+    }
+
+    // Diámetro del grafo: mayor distancia mínima encontrada entre pares alcanzables.
+    // Si el grafo está desconectado, devuelve el máximo finito observado.
+    double calcularDiametro() const {
+        if (listaAdyacencia.empty()) {
+            return 0.0;
+        }
+
+        double diametro = 0.0;
+
+        for (const auto& par : listaAdyacencia) {
+            const std::string& origen = par.first;
+            auto distancias = calcularDistanciasMinimasDesde(origen);
+
+            for (const auto& distancia : distancias) {
+                if (distancia.first != origen && std::isfinite(distancia.second)) {
+                    if (distancia.second > diametro) {
+                        diametro = distancia.second;
+                    }
+                }
+            }
+        }
+
+        return diametro;
     }
 };
