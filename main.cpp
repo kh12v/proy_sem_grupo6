@@ -209,5 +209,19 @@ int main() {
     // ===== Diametro =====
     std::cout << "Diametro del grafo: " << grafo.calcularDiametro() << std::endl;
 
+    // ===== Closeness Centrality =====
+    auto closeness = grafo.calcularClosenessCentrality(0.5, 0.5);
+    std::cout << "\nCloseness Centrality (Aproximado, epsilon=0.5, delta=0.5):\n";
+    for (const auto& par : closeness) {
+        std::cout << "Nodo [" << par.first << "]: " << par.second << "\n";
+    }
+
+    // ===== Excentricidad =====
+    auto excentricidades = grafo.calcularExcentricidad();
+    std::cout << "\nExcentricidades:\n";
+    for (const auto& par : excentricidades) {
+        std::cout << "Nodo [" << par.first << "]: " << par.second << "\n";
+    }
+
     return 0;
 }
