@@ -7,6 +7,8 @@
 #include <iomanip>
 #include "directedGraph.cpp"
 
+// Simplemente muestra el porcentaje de progreso
+// Complejidad O(1)
 void mostrarProgreso(double porcentaje) {
     int anchoBarra = 40;
     int progresoActual = static_cast<int>((porcentaje / 100.0) * anchoBarra);
@@ -21,6 +23,7 @@ void mostrarProgreso(double porcentaje) {
 }
 
 // Está diseñado específicamente para leer grafos no dirigidos, es decir (A->B y B->A)
+// Complejidad: O(L), donde L es el número de líneas del archivo csv
 void cargarDesdeCsvNoDirigido(GrafoDirigido& grafoDirigido, const std::string& nombreArchivo) {
     // Abrir el archivo
     std::ifstream archivo(nombreArchivo, std::ios::binary | std::ios::ate);
@@ -80,6 +83,8 @@ void cargarDesdeCsvNoDirigido(GrafoDirigido& grafoDirigido, const std::string& n
     std::cout << "\n\nCarga completada con exito\n";
 }
 
+// Lee un archivo en formato Pajek y lo carga en el grafo
+// Complejidad: O(V + E)
 bool cargarDesdePajek(GrafoDirigido& grafoDirigido, const std::string& nombreArchivo) {
     std::ifstream archivo(nombreArchivo, std::ios::binary | std::ios::ate);
     if (!archivo.is_open()) {
