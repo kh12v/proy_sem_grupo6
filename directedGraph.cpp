@@ -47,6 +47,22 @@ public:
         }
     }
 
+    // Devuelve una estimación exacta del uso total de memoria en bytes (RAM)
+    size_t obtenerUsoMemoria() const {
+        size_t totalBytes = sizeof(*this);
+        totalBytes += listaAdyacencia.bucket_count() * sizeof(void*);
+
+        for (const auto& par : listaAdyacencia) {
+            totalBytes += sizeof(par.first) + par.first.capacity();
+            totalBytes += sizeof(par.second) + (par.second.capacity() * sizeof(Arista));
+            for (const auto& arista : par.second) {
+                totalBytes += arista.destino.capacity();
+            }
+            totalBytes += sizeof(void*) * 3; // Overhead por nodo del hash map
+        }
+        return totalBytes;
+    }
+
     // Devuelve una lista con los nombres/IDs de todos los nodos presentes en el grafo
     std::vector<std::string> obtenerNombresNodos() const {
     std::vector<std::string> nodos;
@@ -419,67 +435,66 @@ public:
         return diametro;
     }
 
-    // Closeness Centrality Exacta
-    // Calcula la centralidad de cercanía real de todos los vértices
-    // Complejidad: O(V^2 + V*E*log(V))
-    std::unordered_map<std::string, double> calcularClosenessCentrality() const {
-        std::unordered_map<std::string, double> closeness;
-        double n = static_cast<double>(listaAdyacencia.size());
-        if (n <= 1) return closeness;
-
-        for (const auto& par : listaAdyacencia) {
-            const std::string& u = par.first;
-            auto distancias = calcularDistanciasMinimasDesde(u);
-            
-            double sumaDistancias = 0.0;
-            long long alcanzables = 0;
-            for (const auto& d : distancias) {
-                if (d.first != u && std::isfinite(d.second)) {
-                    sumaDistancias += d.second;
-                    alcanzables++;
-                }
-            }
-            
-            if (sumaDistancias > 0 && alcanzables > 0) {
-                closeness[u] = static_cast<double>(alcanzables) / sumaDistancias;
-            } else {
-                closeness[u] = 0.0;
-            }
+    // Método para calcular el Closeness Centrality de un vértice específico
+    // Formulación Matemática del informe: C_c(u) = (n - 1) / sum(d(u, v))
+    // Si el grafo es disconexo desde el nodo (existe algún d(u,v) = inf), C_c(u) = 0.
+    // Complejidad: O(V + E log V)
+    double calcularClosenessCentrality(const std::string& vertice) const {
+        if (listaAdyacencia.find(vertice) == listaAdyacencia.end()) {
+            std::cerr << "Error: El vertice '" << vertice << "' no existe en el grafo.\n";
+            return 0.0;
         }
-        return closeness;
+
+        double n = static_cast<double>(listaAdyacencia.size());
+        if (n <= 1) return 0.0;
+
+        auto distancias = calcularDistanciasMinimasDesde(vertice);
+
+        double sumaDistancias = 0.0;
+        bool esDisconexo = false;
+        long long contNodos = 0;
+
+        for (const auto& distPar : distancias) {
+            if (distPar.first == vertice) continue;
+
+            if (std::isinf(distPar.second)) {
+                esDisconexo = true;
+                break;
+            }
+            sumaDistancias += distPar.second;
+            contNodos++;
+        }
+
+        if (!esDisconexo && contNodos == static_cast<long long>(n - 1) && sumaDistancias > 0) {
+            return (n - 1.0) / sumaDistancias;
+        } else {
+            return 0.0;
+        }
     }
 
-    // Calcular la excentricidad de todos los nodos
-    // Si el grafo es disconexo desde un nodo, su excentricidad se define como infinito (std::numeric_limits<double>::infinity())
-    // Complejidad: O(V^2 + V*E*log(V))
-    std::unordered_map<std::string, double> calcularExcentricidad() const {
-        std::unordered_map<std::string, double> excentricidades;
+    // Método para calcular la Excentricidad de un vértice específico
+    // Formulación Matemática del informe: e(u) = max_{v in V} d(u, v)
+    // Si el grafo es disconexo desde el nodo, su excentricidad se define como infinito (std::numeric_limits<double>::infinity())
+    // Complejidad: O(V + E log V)
+    double calcularExcentricidad(const std::string& vertice) const {
+        if (listaAdyacencia.find(vertice) == listaAdyacencia.end()) {
+            std::cerr << "Error: El vertice '" << vertice << "' no existe en el grafo.\n";
+            return 0.0;
+        }
 
-        for (const auto& par : listaAdyacencia) {
-            const std::string& origen = par.first;
-            auto distancias = calcularDistanciasMinimasDesde(origen);
+        auto distancias = calcularDistanciasMinimasDesde(vertice);
+        double maxDistancia = 0.0;
 
-            double maxDistancia = 0.0;
-            bool esDisconexo = false;
-
-            for (const auto& distPar : distancias) {
-                if (std::isinf(distPar.second)) {
-                    esDisconexo = true;
-                    break;
-                }
-                if (distPar.second > maxDistancia) {
-                    maxDistancia = distPar.second;
-                }
+        for (const auto& distPar : distancias) {
+            if (std::isinf(distPar.second)) {
+                return std::numeric_limits<double>::infinity();
             }
-
-            if (esDisconexo) {
-                excentricidades[origen] = std::numeric_limits<double>::infinity();
-            } else {
-                excentricidades[origen] = maxDistancia;
+            if (distPar.second > maxDistancia) {
+                maxDistancia = distPar.second;
             }
         }
 
-        return excentricidades;
+        return maxDistancia;
     }
 };
 

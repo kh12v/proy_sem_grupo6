@@ -139,12 +139,12 @@ void ejecutarMetricas(GrafoDirigido& grafo1, GrafoDirigido& grafo2, const std::s
         auto inicio_centralidad1 = chrono::high_resolution_clock::now();
         grafo1.calcularCentralidadGrado("Chile"); // vertice arbitrario
         auto fin_centralidad1 = chrono::high_resolution_clock::now();
-        tiempo_centralidad1.push_back(chrono::duration_cast<chrono::milliseconds>(fin_centralidad1 - inicio_centralidad1).count());
+        tiempo_centralidad1.push_back(chrono::duration<double, std::milli>(fin_centralidad1 - inicio_centralidad1).count());
         
         auto inicio_centralidad2 = chrono::high_resolution_clock::now();
         grafo2.calcularCentralidadGrado("USA");        // vertice arbitrario
         auto fin_centralidad2 = chrono::high_resolution_clock::now();
-        tiempo_centralidad2.push_back(chrono::duration_cast<chrono::milliseconds>(fin_centralidad2 - inicio_centralidad2).count());
+        tiempo_centralidad2.push_back(chrono::duration<double, std::milli>(fin_centralidad2 - inicio_centralidad2).count());
     }
 
     //calculo del promedio de tiempo de la centralidad de grado
@@ -188,12 +188,12 @@ void ejecutarMetricas(GrafoDirigido& grafo1, GrafoDirigido& grafo2, const std::s
         auto inicio_betweenness1 = chrono::high_resolution_clock::now();
         grafo1.calcularBetweennessCentrality(true);
         auto fin_betweenness1 = chrono::high_resolution_clock::now();
-        tiempo_betweenness1.push_back(chrono::duration_cast<chrono::milliseconds>(fin_betweenness1 - inicio_betweenness1).count());
+        tiempo_betweenness1.push_back(chrono::duration<double, std::milli>(fin_betweenness1 - inicio_betweenness1).count());
         
         auto inicio_betweenness2 = chrono::high_resolution_clock::now();
         grafo2.calcularBetweennessCentrality(true);
         auto fin_betweenness2 = chrono::high_resolution_clock::now();
-        tiempo_betweenness2.push_back(chrono::duration_cast<chrono::milliseconds>(fin_betweenness2 - inicio_betweenness2).count());
+        tiempo_betweenness2.push_back(chrono::duration<double, std::milli>(fin_betweenness2 - inicio_betweenness2).count());
     }
 
     //calculo del promedio del tiempo de betweenness centrality
@@ -233,12 +233,12 @@ void ejecutarMetricas(GrafoDirigido& grafo1, GrafoDirigido& grafo2, const std::s
         auto inicio_pagerank1 = chrono::high_resolution_clock::now();
         grafo1.calcularPageRank();
         auto fin_pagerank1 = chrono::high_resolution_clock::now();
-        tiempo_pagerank1.push_back(chrono::duration_cast<chrono::milliseconds>(fin_pagerank1 - inicio_pagerank1).count());
+        tiempo_pagerank1.push_back(chrono::duration<double, std::milli>(fin_pagerank1 - inicio_pagerank1).count());
 
         auto inicio_pagerank2 = chrono::high_resolution_clock::now();
         grafo2.calcularPageRank();
         auto fin_pagerank2 = chrono::high_resolution_clock::now();
-        tiempo_pagerank2.push_back(chrono::duration_cast<chrono::milliseconds>(fin_pagerank2 - inicio_pagerank2).count());
+        tiempo_pagerank2.push_back(chrono::duration<double, std::milli>(fin_pagerank2 - inicio_pagerank2).count());
     }
 
     //calculo del promedio del tiempo de pagerank
@@ -278,12 +278,12 @@ void ejecutarMetricas(GrafoDirigido& grafo1, GrafoDirigido& grafo2, const std::s
         auto inicio_asp1 = chrono::high_resolution_clock::now();
         grafo1.calcularAverageShortestPathLength();
         auto fin_asp1 = chrono::high_resolution_clock::now();
-        tiempo_asp1.push_back(chrono::duration_cast<chrono::milliseconds>(fin_asp1 - inicio_asp1).count());
+        tiempo_asp1.push_back(chrono::duration<double, std::milli>(fin_asp1 - inicio_asp1).count());
 
         auto inicio_asp2 = chrono::high_resolution_clock::now();
         grafo2.calcularAverageShortestPathLength();
         auto fin_asp2 = chrono::high_resolution_clock::now();
-        tiempo_asp2.push_back(chrono::duration_cast<chrono::milliseconds>(fin_asp2 - inicio_asp2).count());
+        tiempo_asp2.push_back(chrono::duration<double, std::milli>(fin_asp2 - inicio_asp2).count());
     }
 
     //calculo del promedio del tiempo de average shortest path length
@@ -323,12 +323,12 @@ void ejecutarMetricas(GrafoDirigido& grafo1, GrafoDirigido& grafo2, const std::s
         auto inicio_diametro1 = chrono::high_resolution_clock::now();
         grafo1.calcularDiametro();
         auto fin_diametro1 = chrono::high_resolution_clock::now();
-        tiempo_diametro1.push_back(chrono::duration_cast<chrono::milliseconds>(fin_diametro1 - inicio_diametro1).count());
+        tiempo_diametro1.push_back(chrono::duration<double, std::milli>(fin_diametro1 - inicio_diametro1).count());
 
         auto inicio_diametro2 = chrono::high_resolution_clock::now();
         grafo2.calcularDiametro();
         auto fin_diametro2 = chrono::high_resolution_clock::now();
-        tiempo_diametro2.push_back(chrono::duration_cast<chrono::milliseconds>(fin_diametro2 - inicio_diametro2).count());
+        tiempo_diametro2.push_back(chrono::duration<double, std::milli>(fin_diametro2 - inicio_diametro2).count());
     }
 
     //calculo del promedio del tiempo de diametro
@@ -363,17 +363,17 @@ void ejecutarMetricas(GrafoDirigido& grafo1, GrafoDirigido& grafo2, const std::s
     vector<double> tiempo_closeness1;
     vector<double> tiempo_closeness2;
 
-    //medicion del tiempo de closeness centrality (usando epsilon=0.5, delta=0.5)
+    //medicion del tiempo de closeness centrality
     for(int i = 0; i < 10; i++){
         auto inicio_closeness1 = chrono::high_resolution_clock::now();
-        grafo1.calcularClosenessCentrality();
+        grafo1.calcularClosenessCentrality("Chile"); // vertice arbitrario
         auto fin_closeness1 = chrono::high_resolution_clock::now();
-        tiempo_closeness1.push_back(chrono::duration_cast<chrono::milliseconds>(fin_closeness1 - inicio_closeness1).count());
+        tiempo_closeness1.push_back(chrono::duration<double, std::milli>(fin_closeness1 - inicio_closeness1).count());
 
         auto inicio_closeness2 = chrono::high_resolution_clock::now();
-        grafo2.calcularClosenessCentrality();
+        grafo2.calcularClosenessCentrality("USA");        // vertice arbitrario
         auto fin_closeness2 = chrono::high_resolution_clock::now();
-        tiempo_closeness2.push_back(chrono::duration_cast<chrono::milliseconds>(fin_closeness2 - inicio_closeness2).count());
+        tiempo_closeness2.push_back(chrono::duration<double, std::milli>(fin_closeness2 - inicio_closeness2).count());
     }
 
     //calculo del promedio del tiempo de closeness centrality
@@ -411,14 +411,14 @@ void ejecutarMetricas(GrafoDirigido& grafo1, GrafoDirigido& grafo2, const std::s
     //medicion del tiempo de excentricidad
     for(int i = 0; i < 10; i++){
         auto inicio_eccentricity1 = chrono::high_resolution_clock::now();
-        grafo1.calcularExcentricidad();
+        grafo1.calcularExcentricidad("Chile"); // vertice arbitrario
         auto fin_eccentricity1 = chrono::high_resolution_clock::now();
-        tiempo_eccentricity1.push_back(chrono::duration_cast<chrono::milliseconds>(fin_eccentricity1 - inicio_eccentricity1).count());
+        tiempo_eccentricity1.push_back(chrono::duration<double, std::milli>(fin_eccentricity1 - inicio_eccentricity1).count());
 
         auto inicio_eccentricity2 = chrono::high_resolution_clock::now();
-        grafo2.calcularExcentricidad();
+        grafo2.calcularExcentricidad("USA");        // vertice arbitrario
         auto fin_eccentricity2 = chrono::high_resolution_clock::now();
-        tiempo_eccentricity2.push_back(chrono::duration_cast<chrono::milliseconds>(fin_eccentricity2 - inicio_eccentricity2).count());
+        tiempo_eccentricity2.push_back(chrono::duration<double, std::milli>(fin_eccentricity2 - inicio_eccentricity2).count());
     }
 
     //calculo del promedio del tiempo de excentricidad
@@ -466,32 +466,48 @@ int main() {
     auto finCargaDataset2 = std::chrono::high_resolution_clock::now();
 
     std::cout << "\n==================================================\n";
-    std::cout << "Dataset 1: " << dataset1 << "         " << "Tiempo de Construccion de Grafo: " << std::chrono::duration_cast<std::chrono::milliseconds>(finCargaDataset1 - inicioCargaDataset1).count() << " ms\n";
-    std::cout << "Dataset 2: " << dataset2 << "        " << "Tiempo de Construccion de Grafo: " << std::chrono::duration_cast<std::chrono::milliseconds>(finCargaDataset2 - inicioCargaDataset2).count() << " ms\n\n";
-    std::cout << "Dataset 1: " << dataset1 << "         " << "Espacio en memoria: " << sizeof(grafo1) << " bytes\n";
-    std::cout << "Dataset 2: " << dataset2 << "        " << "Espacio en memoria: " << sizeof(grafo2) << " bytes\n";
+    std::cout << "Dataset 1: " << dataset1 << "         " << "Tiempo de Construccion de Grafo: " << std::chrono::duration<double, std::milli>(finCargaDataset1 - inicioCargaDataset1).count() << " ms\n";
+    std::cout << "Dataset 2: " << dataset2 << "        " << "Tiempo de Construccion de Grafo: " << std::chrono::duration<double, std::milli>(finCargaDataset2 - inicioCargaDataset2).count() << " ms\n\n";
+    std::cout << "Dataset 1: " << dataset1 << "         " << "Espacio en memoria: " << grafo1.obtenerUsoMemoria() << " bytes (" << std::fixed << std::setprecision(2) << (grafo1.obtenerUsoMemoria() / 1024.0) << " KB)\n";
+    std::cout << "Dataset 2: " << dataset2 << "        " << "Espacio en memoria: " << grafo2.obtenerUsoMemoria() << " bytes (" << std::fixed << std::setprecision(2) << (grafo2.obtenerUsoMemoria() / 1024.0) << " KB)\n";
     std::cout << "==================================================\n\n";
 
     std::cout << "--- EXPERIMENTO 1: GRAFOS ORIGINALES ---\n";
     ejecutarMetricas(grafo1, grafo2, dataset1, dataset2);
 
-    std::cout << "\n--- EXPERIMENTO 2: AGREGANDO ARISTAS ---\n";
-    grafo1.agregarArista("nm0004821", "nm_nuevo", 1.0);
-    grafo1.agregarArista("nm_nuevo", "nm0004821", 1.0);
-    grafo2.agregarArista("USA", "NUEVO_PAIS", 1.0);
+        std::cout << "\n--- EXPERIMENTO 2: AGREGANDO ARISTAS (Chile - Algeria / USA - AGO) ---\n";
+    grafo1.agregarArista("Chile", "Algeria", 1.0);
+    grafo2.agregarArista("USA", "AGO", 1.0);
     ejecutarMetricas(grafo1, grafo2, dataset1, dataset2);
 
-    std::cout << "\n--- EXPERIMENTO 3: QUITANDO ARISTAS ---\n";
-    // Quitando las aristas agregadas en el experimento 2
-    grafo1.eliminarArista("nm0004821", "nm_nuevo");
-    grafo1.eliminarArista("nm_nuevo", "nm0004821");
-    grafo2.eliminarArista("USA", "NUEVO_PAIS");
+    std::cout << "\n--- EXPERIMENTO 3: AGREGANDO ARISTAS (Chile - Bangladesh / USA - BTN) ---\n";
+    // Quitar aristas del experimento 2
+    grafo1.eliminarArista("Chile", "Algeria");
+    grafo2.eliminarArista("USA", "AGO");
+
+    // Agregar aristas experimento 3
+    grafo1.agregarArista("Chile", "Bangladesh", 1.0);
+    grafo2.agregarArista("USA", "BTN", 1.0);
+    ejecutarMetricas(grafo1, grafo2, dataset1, dataset2);
+
+    std::cout << "\n--- EXPERIMENTO 4: ELIMINACION CASO 1 (Chile-China / USA-CHL) ---\n";
+    // Quitando las aristas agregadas en el experimento 3
+    grafo1.eliminarArista("Chile", "Bangladesh");
+    grafo2.eliminarArista("USA", "BTN");
     
-    // Quitando algunas aristas existentes originalmente
-    grafo1.eliminarArista("nm0004821", "nm0000001");
-    grafo1.eliminarArista("nm0000001", "nm0004821");
+    // Quitando aristas existentes originalmente (Caso 1)
+    grafo1.eliminarArista("Chile", "China");
     grafo2.eliminarArista("USA", "CHL");
-    
+    ejecutarMetricas(grafo1, grafo2, dataset1, dataset2);
+
+    std::cout << "\n--- EXPERIMENTO 5: ELIMINACION CASO 2 (Brazil-Chile / USA-DEU) ---\n";
+    // Restaurando aristas del caso 1 para aislar el experimento 2
+    grafo1.agregarArista("Chile", "China", 1.0);
+    grafo2.agregarArista("USA", "CHL", 1.0);
+
+    // Quitando aristas existentes en otro punto de la red (Caso 2)
+    grafo1.eliminarArista("Brazil", "Chile");
+    grafo2.eliminarArista("USA", "DEU");
     ejecutarMetricas(grafo1, grafo2, dataset1, dataset2);
 
     return 0;
