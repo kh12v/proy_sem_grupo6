@@ -24,6 +24,7 @@ private:
 
 public:
     // Método para agregar una arista
+    // Complejidad: O(1)
     void agregarArista(const std::string& origen, const std::string& destino, double peso) {
         listaAdyacencia[origen].push_back({destino, peso});
 
@@ -45,6 +46,7 @@ public:
 
     // Calcula las distancias mínimas desde un nodo usando Dijkstra.
     // Devuelve solo distancias finitas hacia nodos alcanzables.
+    // Complejidad: O(V + E log(V))
     std::unordered_map<std::string, double> calcularDistanciasMinimasDesde(const std::string& origen) const {
         std::unordered_map<std::string, double> distancias;
 
@@ -84,6 +86,7 @@ public:
     }
 
     // Método para visualizar el contenido del grafo
+    // Complejidad: O(V + E)
     void imprimirGrafo() {
         for (const auto& par : listaAdyacencia) {
             std::cout << "Arista [" << par.first << "] tiene aristas salientes:\n";
@@ -101,6 +104,7 @@ public:
     }
     
     // Método extra para saber el información sobre el grafo
+    // Complejidad: O(V)
     void imprimirInformacion() {
         size_t totalAristas = 0;
         for (const auto& par : listaAdyacencia) {
@@ -116,6 +120,7 @@ public:
     // Método para calcular el Degree Centrality de un vértice
     // normalizada: Si es true, divide el resultado entre (Total_Nodos - 1).
     // ponderada: Si es true, suma los pesos en lugar de contar las aristas.
+    // Complejidad: O(V + E)
     double calcularCentralidadGrado(const std::string& vertice, bool normalizada = true, bool ponderada = false) {
         // Validar que el vértice exista en el grafo
         if (listaAdyacencia.find(vertice) == listaAdyacencia.end()) {
@@ -157,6 +162,7 @@ public:
 
     // Método para calcular el Betweenness Centrality de todos los nodos
     // normalizada: Si es true, divide el resultado entre (N-1)*(N-2)
+    // Complejidad: O(V^2 + V*E*log(V))
     std::unordered_map<std::string, double> calcularBetweennessCentrality(bool normalizada = true) {
         std::unordered_map<std::string, double> betweenness;
         
@@ -265,6 +271,7 @@ public:
     // d: Damping factor (Factor de amortiguación), default: 0.85
     // maxIteraciones: Límite de seguridad por si el grafo no converge
     // tolerancia: Margen de error para decidir que los valores ya se estabilizaron
+    // Complejidad: O(I * (V + E)), donde I es el número de iteraciones (maxIteraciones)
     std::unordered_map<std::string, double> calcularPageRank(double d = 0.85, int maxIteraciones = 100, double tolerancia = 1e-6) {
         size_t N = listaAdyacencia.size();
         std::unordered_map<std::string, double> pr;
@@ -344,6 +351,7 @@ public:
 
     // Average Shortest Path Length (ASP): promedio de todas las distancias mínimas finitas.
     // En grafos desconectados se promedian solo los pares alcanzables.
+    // Complejidad: O(V^2 + V*E*log(V))
     double calcularAverageShortestPathLength() const {
         if (listaAdyacencia.empty()) {
             return 0.0;
@@ -373,6 +381,7 @@ public:
 
     // Diámetro del grafo: mayor distancia mínima encontrada entre pares alcanzables.
     // Si el grafo está desconectado, devuelve el máximo finito observado.
+    // Complejidad: O(V^2 + V*E*log(V))
     double calcularDiametro() const {
         if (listaAdyacencia.empty()) {
             return 0.0;
@@ -399,6 +408,7 @@ public:
     // Closeness Centrality con aproximación usando muestreo (Sampling)
     // epsilon: parámetro de precisión
     // delta: parámetro de probabilidad de fallo
+    // Complejidad: O(log(V) * (V + E*log(V)))
     std::unordered_map<std::string, double> calcularClosenessCentrality(double epsilon, double delta) {
         std::unordered_map<std::string, double> sum_v;
         int n = listaAdyacencia.size();
@@ -453,6 +463,7 @@ public:
 
     // Calcular la excentricidad de todos los nodos
     // Si el grafo es disconexo desde un nodo, su excentricidad se define como infinito (std::numeric_limits<double>::infinity())
+    // Complejidad: O(V^2 + V*E*log(V))
     std::unordered_map<std::string, double> calcularExcentricidad() const {
         std::unordered_map<std::string, double> excentricidades;
 
