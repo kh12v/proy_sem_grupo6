@@ -215,7 +215,7 @@ int main() {
     std::cout << "Diametro del grafo: " << grafo.calcularDiametro() << std::endl;
 
     // ===== Closeness Centrality =====
-    auto closeness = grafo.calcularClosenessCentrality(0.5, 0.5);
+    auto closeness = grafo.calcularClosenessCentrality();
     std::cout << "\nCloseness Centrality (Aproximado, epsilon=0.5, delta=0.5):\n";
     for (const auto& par : closeness) {
         std::cout << "Nodo [" << par.first << "]: " << par.second << "\n";

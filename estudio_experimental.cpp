@@ -366,12 +366,12 @@ void ejecutarMetricas(GrafoDirigido& grafo1, GrafoDirigido& grafo2, const std::s
     //medicion del tiempo de closeness centrality (usando epsilon=0.5, delta=0.5)
     for(int i = 0; i < 10; i++){
         auto inicio_closeness1 = chrono::high_resolution_clock::now();
-        grafo1.calcularClosenessCentrality(0.5, 0.5);
+        grafo1.calcularClosenessCentrality();
         auto fin_closeness1 = chrono::high_resolution_clock::now();
         tiempo_closeness1.push_back(chrono::duration_cast<chrono::milliseconds>(fin_closeness1 - inicio_closeness1).count());
 
         auto inicio_closeness2 = chrono::high_resolution_clock::now();
-        grafo2.calcularClosenessCentrality(0.5, 0.5);
+        grafo2.calcularClosenessCentrality();
         auto fin_closeness2 = chrono::high_resolution_clock::now();
         tiempo_closeness2.push_back(chrono::duration_cast<chrono::milliseconds>(fin_closeness2 - inicio_closeness2).count());
     }

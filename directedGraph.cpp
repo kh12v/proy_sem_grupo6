@@ -419,60 +419,34 @@ public:
         return diametro;
     }
 
-    // Closeness Centrality con aproximación usando muestreo (Sampling)
-    // epsilon: parámetro de precisión
-    // delta: parámetro de probabilidad de fallo
-    // Complejidad: O(log(V) * (V + E*log(V)))
-    std::unordered_map<std::string, double> calcularClosenessCentrality(double epsilon, double delta) {
-        std::unordered_map<std::string, double> sum_v;
-        int n = listaAdyacencia.size();
-        
-        // Inicializar sum_v en 0 para todos los nodos
+    // Closeness Centrality Exacta
+    // Calcula la centralidad de cercanía real de todos los vértices
+    // Complejidad: O(V^2 + V*E*log(V))
+    std::unordered_map<std::string, double> calcularClosenessCentrality() const {
+        std::unordered_map<std::string, double> closeness;
+        double n = static_cast<double>(listaAdyacencia.size());
+        if (n <= 1) return closeness;
+
         for (const auto& par : listaAdyacencia) {
-            sum_v[par.first] = 0.0;
-        }
-
-        if (n <= 1) {
-            return sum_v;
-        }
-
-        // k >= 1/(2*epsilon^2) * log(2n/delta) * (n/(n-1))^2
-        double k_val = (1.0 / (2.0 * std::pow(epsilon, 2))) * std::log((2.0 * n) / delta) * std::pow((static_cast<double>(n) / (n - 1.0)), 2);
-        int k = static_cast<int>(std::ceil(k_val));
-        if (k < 1) k = 1;
-
-        // Obtener todos los vértices en un vector para selección aleatoria
-        std::vector<std::string> vertices;
-        vertices.reserve(n);
-        for (const auto& par : listaAdyacencia) {
-            vertices.push_back(par.first);
-        }
-
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<size_t> dis(0, n - 1);
-
-        for (int i = 0; i < k; i++) {
-            std::string v = vertices[dis(gen)];
-            std::unordered_map<std::string, double> dist = calcularDistanciasMinimasDesde(v);
-
-            for (const auto& u : vertices) {
-                // Si la distancia es infinita, sum_v[u] se convertirá en infinito
-                sum_v[u] += dist[u];
+            const std::string& u = par.first;
+            auto distancias = calcularDistanciasMinimasDesde(u);
+            
+            double sumaDistancias = 0.0;
+            long long alcanzables = 0;
+            for (const auto& d : distancias) {
+                if (d.first != u && std::isfinite(d.second)) {
+                    sumaDistancias += d.second;
+                    alcanzables++;
+                }
             }
-        }
-
-        std::unordered_map<std::string, double> c;
-        for (const auto& u : vertices) {
-            double val = sum_v[u];
-            if (val == 0.0 || std::isinf(val)) {
-                c[u] = 0.0;
+            
+            if (sumaDistancias > 0 && alcanzables > 0) {
+                closeness[u] = static_cast<double>(alcanzables) / sumaDistancias;
             } else {
-                c[u] = (static_cast<double>(n) - 1.0) / ((static_cast<double>(n) / k) * val);
+                closeness[u] = 0.0;
             }
         }
-
-        return c;
+        return closeness;
     }
 
     // Calcular la excentricidad de todos los nodos
