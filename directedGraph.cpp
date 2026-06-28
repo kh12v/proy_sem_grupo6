@@ -32,6 +32,17 @@ public:
         }
     }
 
+    // Devuelve una lista con los nombres/IDs de todos los nodos presentes en el grafo
+    std::vector<std::string> obtenerNombresNodos() const {
+    std::vector<std::string> nodos;
+    nodos.reserve(listaAdyacencia.size());
+    for (const auto& par : listaAdyacencia) {
+        nodos.push_back(par.first);
+    }
+    return nodos;
+}
+
+
     // Calcula las distancias mínimas desde un nodo usando Dijkstra.
     // Devuelve solo distancias finitas hacia nodos alcanzables.
     std::unordered_map<std::string, double> calcularDistanciasMinimasDesde(const std::string& origen) const {
