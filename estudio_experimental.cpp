@@ -126,35 +126,7 @@ bool cargarDesdePajek(GrafoDirigido& grafoDirigido, const std::string& nombreArc
     return true;
 }
 
-int main() {
-    //creacion de las variables grafo
-    GrafoDirigido grafo1;
-    GrafoDirigido grafo2;
-    
-    //ruta de los datasets que se importaran
-    std::string dataset1 = "datasets/imdbActorsNetwork.csv";
-    std::string dataset2 = "datasets/tradeNetwork2018.net";
-
-    //pasar los datasets a los grafos
-    auto inicioCargaDataset1 = std::chrono::high_resolution_clock::now();
-    cargarDesdeCsvNoDirigido(grafo1, dataset1);
-    auto finCargaDataset1 = std::chrono::high_resolution_clock::now();
-    
-    auto inicioCargaDataset2 = std::chrono::high_resolution_clock::now();
-    cargarDesdePajek(grafo2, dataset2);
-    auto finCargaDataset2 = std::chrono::high_resolution_clock::now();
-
-    //muestreo en pantalla de los resultados de tiempo
-    std::cout << "\n==================================================\n";
-    std::cout << "Dataset 1: " << dataset1 << "         " << "Tiempo de Construccion de Grafo: " << std::chrono::duration_cast<std::chrono::milliseconds>(finCargaDataset1 - inicioCargaDataset1).count() << " ms\n";
-    std::cout << "Dataset 2: " << dataset2 << "        " << "Tiempo de Construccion de Grafo: " << std::chrono::duration_cast<std::chrono::milliseconds>(finCargaDataset2 - inicioCargaDataset2).count() << " ms\n";
-
-    std::cout<< "\n";
-
-    //espacio en memoria utlizado por cada grafo
-    std::cout << "Dataset 1: " << dataset1 << "         " << "Espacio en memoria: " << sizeof(grafo1) << " bytes\n";
-    std::cout << "Dataset 2: " << dataset2 << "        " << "Espacio en memoria: " << sizeof(grafo2) << " bytes\n";
-    std::cout << "==================================================\n\n";
+void ejecutarMetricas(GrafoDirigido& grafo1, GrafoDirigido& grafo2, const std::string& dataset1, const std::string& dataset2) {
 
     // =========================================================
     // 1. CENTRALIDAD DE GRADO
@@ -165,7 +137,7 @@ int main() {
     //calculo de la centralidad de grado 10 veces
     for(int i = 0; i < 10; i++){
         auto inicio_centralidad1 = chrono::high_resolution_clock::now();
-        grafo1.calcularCentralidadGrado("nm0004821"); // vertice arbitrario
+        grafo1.calcularCentralidadGrado("Chile"); // vertice arbitrario
         auto fin_centralidad1 = chrono::high_resolution_clock::now();
         tiempo_centralidad1.push_back(chrono::duration_cast<chrono::milliseconds>(fin_centralidad1 - inicio_centralidad1).count());
         
@@ -474,6 +446,53 @@ int main() {
     std::cout << "Dataset 2: " << dataset2 << "        " << "Tiempo promedio de Excentricidad: " << promedio_eccentricity2 << " ms\n";
     std::cout << "Dataset 1: " << dataset1 << "         " << "Varianza de datos: " << varianza_eccentricity1 << " ms\n";
     std::cout << "Dataset 2: " << dataset2 << "        " << "Varianza de datos: " << varianza_eccentricity2 << " ms\n\n";
+
+}
+
+int main() {
+    GrafoDirigido grafo1;
+    GrafoDirigido grafo2;
+    
+    // std::string dataset1 = "datasets/imdbActorsNetwork.csv";
+    std::string dataset1 = "datasets/imports_manufactures.net";
+    std::string dataset2 = "datasets/tradeNetwork2018.net";
+
+    auto inicioCargaDataset1 = std::chrono::high_resolution_clock::now();
+    cargarDesdePajek(grafo1, dataset1);
+    auto finCargaDataset1 = std::chrono::high_resolution_clock::now();
+    
+    auto inicioCargaDataset2 = std::chrono::high_resolution_clock::now();
+    cargarDesdePajek(grafo2, dataset2);
+    auto finCargaDataset2 = std::chrono::high_resolution_clock::now();
+
+    std::cout << "\n==================================================\n";
+    std::cout << "Dataset 1: " << dataset1 << "         " << "Tiempo de Construccion de Grafo: " << std::chrono::duration_cast<std::chrono::milliseconds>(finCargaDataset1 - inicioCargaDataset1).count() << " ms\n";
+    std::cout << "Dataset 2: " << dataset2 << "        " << "Tiempo de Construccion de Grafo: " << std::chrono::duration_cast<std::chrono::milliseconds>(finCargaDataset2 - inicioCargaDataset2).count() << " ms\n\n";
+    std::cout << "Dataset 1: " << dataset1 << "         " << "Espacio en memoria: " << sizeof(grafo1) << " bytes\n";
+    std::cout << "Dataset 2: " << dataset2 << "        " << "Espacio en memoria: " << sizeof(grafo2) << " bytes\n";
+    std::cout << "==================================================\n\n";
+
+    std::cout << "--- EXPERIMENTO 1: GRAFOS ORIGINALES ---\n";
+    ejecutarMetricas(grafo1, grafo2, dataset1, dataset2);
+
+    std::cout << "\n--- EXPERIMENTO 2: AGREGANDO ARISTAS ---\n";
+    grafo1.agregarArista("nm0004821", "nm_nuevo", 1.0);
+    grafo1.agregarArista("nm_nuevo", "nm0004821", 1.0);
+    grafo2.agregarArista("USA", "NUEVO_PAIS", 1.0);
+    ejecutarMetricas(grafo1, grafo2, dataset1, dataset2);
+
+    std::cout << "\n--- EXPERIMENTO 3: QUITANDO ARISTAS ---\n";
+    // Quitando las aristas agregadas en el experimento 2
+    grafo1.eliminarArista("nm0004821", "nm_nuevo");
+    grafo1.eliminarArista("nm_nuevo", "nm0004821");
+    grafo2.eliminarArista("USA", "NUEVO_PAIS");
+    
+    // Quitando algunas aristas existentes originalmente
+    grafo1.eliminarArista("nm0004821", "nm0000001");
+    grafo1.eliminarArista("nm0000001", "nm0004821");
+    grafo2.eliminarArista("USA", "CHL");
+    
+    ejecutarMetricas(grafo1, grafo2, dataset1, dataset2);
 
     return 0;
 }

@@ -171,12 +171,12 @@ bool cargarDesdePajek(GrafoDirigido& grafoDirigido, const std::string& nombreArc
 
 int main() {
     GrafoDirigido grafo;
-    std::string nombreArchivoCsv = "datasets/imdbActorsNetwork.csv";
+    std::string nombreArchivoPajek0 = "datasets/imports_manufactures.net";
     std::string nombreArchivoPajek = "datasets/tradeNetwork2018.net";
     std::string nombreDummyCsv = "datasets/dummy.csv";
     std::string nombreDummyPajek = "datasets/dummy.net";
 
-    cargarDesdePajek(grafo, nombreDummyPajek);
+    cargarDesdePajek(grafo, nombreArchivoPajek0);
     
     // ===== Centralidad de grado =====
 

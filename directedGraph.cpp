@@ -33,6 +33,20 @@ public:
         }
     }
 
+    // Método para eliminar una arista
+    // Complejidad: O(E) donde E es el grado de salida del nodo
+    void eliminarArista(const std::string& origen, const std::string& destino) {
+        if (listaAdyacencia.find(origen) != listaAdyacencia.end()) {
+            auto& aristas = listaAdyacencia[origen];
+            for (auto it = aristas.begin(); it != aristas.end(); ++it) {
+                if (it->destino == destino) {
+                    aristas.erase(it);
+                    break;
+                }
+            }
+        }
+    }
+
     // Devuelve una lista con los nombres/IDs de todos los nodos presentes en el grafo
     std::vector<std::string> obtenerNombresNodos() const {
     std::vector<std::string> nodos;
