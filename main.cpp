@@ -22,67 +22,6 @@ void mostrarProgreso(double porcentaje) {
     std::cout << "] " << std::fixed << std::setprecision(1) << porcentaje << "%" << std::flush;
 }
 
-// Está diseñado específicamente para leer grafos no dirigidos, es decir (A->B y B->A)
-// Complejidad: O(L), donde L es el número de líneas del archivo csv
-void cargarDesdeCsvNoDirigido(GrafoDirigido& grafoDirigido, const std::string& nombreArchivo) {
-    // Abrir el archivo
-    std::ifstream archivo(nombreArchivo, std::ios::binary | std::ios::ate);
-    if (!archivo.is_open()) {
-        std::cerr << "Error: No se pudo abrir el archivo " << nombreArchivo << "\n";
-        return;
-    }
-
-    std::streamsize tamanoTotalBytes = archivo.tellg();
-    archivo.seekg(0, std::ios::beg);
-
-    std::string linea;
-    
-    // Descartar la línea del encabezado
-    if (!std::getline(archivo, linea)) {
-        std::cerr << "Error: El archivo esta vacio.\n";
-        return;
-    }
-
-    std::cout << "Iniciando la lectura del dataset...\n";
-
-    // Variables para el parseo
-    std::string origen, destino, pesoStr;
-    double peso;
-    
-    long long lineasProcesadas = 0;
-
-    // Bucle de lectura línea por línea
-    while (std::getline(archivo, linea)) {
-        if (linea.empty()) continue;
-
-        std::stringstream ss(linea);
-        
-        // Separar por comas
-        if (std::getline(ss, origen, ',') &&
-            std::getline(ss, destino, ',') &&
-            std::getline(ss, pesoStr, ',')) {
-            
-            peso = std::stod(pesoStr);
-
-            // Insertar de manera NO dirigida (A->B y B->A)
-            grafoDirigido.agregarArista(origen, destino, peso);
-            grafoDirigido.agregarArista(destino, origen, peso);
-        }
-
-        lineasProcesadas++;
-
-        // Actualizar la pantalla cada 1000 líneas para optimizar la velocidad de procesamiento
-        if (lineasProcesadas % 1000 == 0) {
-            std::streamsize bytesLeidos = archivo.tellg();
-            double porcentaje = (static_cast<double>(bytesLeidos) / tamanoTotalBytes) * 100.0;
-            mostrarProgreso(porcentaje);
-        }
-    }
-
-    mostrarProgreso(100.0);
-    std::cout << "\n\nCarga completada con exito\n";
-}
-
 // Lee un archivo en formato Pajek y lo carga en el grafo
 // Complejidad: O(V + E)
 bool cargarDesdePajek(GrafoDirigido& grafoDirigido, const std::string& nombreArchivo) {
@@ -173,10 +112,9 @@ int main() {
     GrafoDirigido grafo;
     std::string nombreArchivoPajek0 = "datasets/imports_manufactures.net";
     std::string nombreArchivoPajek = "datasets/tradeNetwork2018.net";
-    std::string nombreDummyCsv = "datasets/dummy.csv";
     std::string nombreDummyPajek = "datasets/dummy.net";
 
-    cargarDesdePajek(grafo, nombreArchivoPajek0);
+    cargarDesdePajek(grafo, nombreDummyPajek);
     
     // ===== Centralidad de grado =====
 
