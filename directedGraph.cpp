@@ -436,8 +436,9 @@ public:
     }
 
     // Método para calcular el Closeness Centrality de un vértice específico
-    // Formulación Matemática del informe: C_c(u) = (n - 1) / sum(d(u, v))
-    // Si el grafo es disconexo desde el nodo (existe algún d(u,v) = inf), C_c(u) = 0.
+    // Formulación Matemática Principal: C_c(u) = (n - 1) / sum(d(u, v)) para grafos conexos.
+    // Caso Excepcional (Adaptación de Wasserman y Faust para grafos disconexos):
+    // C_WF(u) = [ (|V_u| - 1) / (n - 1) ] * [ (|V_u| - 1) / sum_{v in V_u} d(u, v) ]
     // Complejidad: O(V + E log V)
     double calcularClosenessCentrality(const std::string& vertice) const {
         if (listaAdyacencia.find(vertice) == listaAdyacencia.end()) {
@@ -452,24 +453,35 @@ public:
 
         double sumaDistancias = 0.0;
         bool esDisconexo = false;
-        long long contNodos = 0;
+        long long alcanzables = 0; // |V_u| - 1
 
         for (const auto& distPar : distancias) {
             if (distPar.first == vertice) continue;
 
             if (std::isinf(distPar.second)) {
                 esDisconexo = true;
-                break;
+            } else {
+                sumaDistancias += distPar.second;
+                alcanzables++;
             }
-            sumaDistancias += distPar.second;
-            contNodos++;
         }
 
-        if (!esDisconexo && contNodos == static_cast<long long>(n - 1) && sumaDistancias > 0) {
-            return (n - 1.0) / sumaDistancias;
-        } else {
+        if (sumaDistancias <= 0 || alcanzables == 0) {
             return 0.0;
         }
+
+        // Caso Principal: Grafo totalmente conexo desde u
+        if (!esDisconexo && alcanzables == static_cast<long long>(n - 1)) {
+            return (n - 1.0) / sumaDistancias;
+        }
+
+        // Caso Excepcional: Adaptación de Wasserman y Faust para grafos disconexos
+        // C_WF(u) = [k / (n - 1)] * [k / sumaDistancias]  donde k = alcanzables (|V_u| - 1)
+        double k = static_cast<double>(alcanzables);
+        double factorEscalamiento = k / (n - 1.0);
+        double closenessSubgrafo = k / sumaDistancias;
+
+        return factorEscalamiento * closenessSubgrafo;
     }
 
     // Método para calcular la Excentricidad de un vértice específico

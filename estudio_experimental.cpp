@@ -510,5 +510,9 @@ int main() {
     grafo2.eliminarArista("USA", "DEU");
     ejecutarMetricas(grafo1, grafo2, dataset1, dataset2);
 
+    std::cout << "==================================================\n";
+    std::cout << "Ejecucion completada.";
+    std::cout << "==================================================\n";
+
     return 0;
 }
