@@ -24,45 +24,6 @@ void mostrarProgreso(double porcentaje) {
     std::cout << "] " << std::fixed << std::setprecision(1) << porcentaje << "%" << std::flush;
 }
 
-void cargarDesdeCsvNoDirigido(GrafoDirigido& grafoDirigido, const std::string& nombreArchivo) {
-    std::ifstream archivo(nombreArchivo, std::ios::binary | std::ios::ate);
-    if (!archivo.is_open()) {
-        std::cerr << "Error: No se pudo abrir el archivo " << nombreArchivo << "\n";
-        return;
-    }
-
-    std::streamsize tamanoTotalBytes = archivo.tellg();
-    archivo.seekg(0, std::ios::beg);
-
-    std::string linea;
-    if (!std::getline(archivo, linea)) return;
-
-    std::cout << "Iniciando la lectura del dataset CSV...\n";
-    std::string origen, destino, pesoStr;
-    double peso;
-    long long lineasProcesadas = 0;
-
-    while (std::getline(archivo, linea)) {
-        if (linea.empty()) continue;
-        std::stringstream ss(linea);
-        if (std::getline(ss, origen, ',') &&
-            std::getline(ss, destino, ',') &&
-            std::getline(ss, pesoStr, ',')) {
-            peso = std::stod(pesoStr);
-            grafoDirigido.agregarArista(origen, destino, peso);
-            grafoDirigido.agregarArista(destino, origen, peso);
-        }
-        lineasProcesadas++;
-        if (lineasProcesadas % 1000 == 0) {
-            std::streamsize bytesLeidos = archivo.tellg();
-            double porcentaje = (static_cast<double>(bytesLeidos) / tamanoTotalBytes) * 100.0;
-            mostrarProgreso(porcentaje);
-        }
-    }
-    mostrarProgreso(100.0);
-    std::cout << "\nCarga CSV completada con exito.\n";
-}
-
 bool cargarDesdePajek(GrafoDirigido& grafoDirigido, const std::string& nombreArchivo) {
     std::ifstream archivo(nombreArchivo, std::ios::binary | std::ios::ate);
     if (!archivo.is_open()) {
@@ -453,7 +414,6 @@ int main() {
     GrafoDirigido grafo1;
     GrafoDirigido grafo2;
     
-    // std::string dataset1 = "datasets/imdbActorsNetwork.csv";
     std::string dataset1 = "datasets/imports_manufactures.net";
     std::string dataset2 = "datasets/tradeNetwork2018.net";
 
